@@ -1,0 +1,5 @@
+Julius Jenkins Ubh226
+No make files for java file 
+just use" javac prog.java -d ."
+to run "java prog.prog 1000"
+  the project was simple

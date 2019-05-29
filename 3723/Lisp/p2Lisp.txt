@@ -1,0 +1,73 @@
+;;;REPEAT
+;;;	Parameters:
+;;;       atm - contains an atom thats going to printed N times
+::;        N - The number of times the atm will be repeated
+;;;    Purpose:
+;;;     constructs a new list with atm repeated N times.
+(defun repeat(atm N)
+ (cond( (zerop N) nil)
+  ( T (cons  atm (repeat atm (- N 1)))))
+ )
+;;;Duplicate
+;;;	Parameters:
+;;;       Lis - a list items to be Duplicate
+;;;    Purpose:
+;;;    which duplicates each atom of a list
+    (defun duplicate(list)
+     (setf C (car list))
+     (cond((NULL list) NIL)((atom c) (append(repeat c 2) (duplicate (cdr list))))
+      ((cons  c (duplicate (cdr list)))))
+    )
+;;; DuplicateN
+;;;	Parameters:
+;;;       Lis - a list items to be Duplicate
+;;;	  N - The number of times the items of the list will be repeated
+;;;    Purpose:
+;;;    which duplicates N number of times each atom of a list
+    (defun duplicateN(list N)
+     (setf C (car list))
+     (cond((NULL list) NIL)((atom c) (append(repeat c N) (duplicateN (cdr list) N)))
+      ((cons  c (duplicateN (cdr list) N))))
+    )
+;;; DuplicateDeep
+;;;	Parameters:
+;;;       Lis - a list items to be Duplicate
+;;;    Purpose:
+;;;    duplicates each atom at any level
+    (defun duplicateDeep(list)
+     (setf C (car list))
+     (cond((NULL list) NIL)((atom c) (append(repeat c 2) (duplicateDeep (cdr list))))
+      ((cons  (duplicateDeep c) (duplicateDeep (cdr list)))))
+    )
+;;; PRINTWOPLIS
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;      Helper function to PRINTWOP, prints out
+;;;      each atom of a list without the top level 
+;;;      parentheses. 
+(defun printWOPLis (lis) 
+    (cond    ( (NULL lis) T)
+        ( T (PRINC (CAR lis)) (PRINC " ") (printWOPLis (CDR lis)))
+    )
+)
+
+    (defun printWOP (lis)
+    (terpri)
+     (cond((NULL lis) (PRINC NIL) t)
+     
+      ( (atom lis)(princ lis)(princ " ") T )
+      ((printWOPLis lis ) T)
+     )
+    )
+
+;;; EVALEACH
+;;;    Parameters:
+;;;       lis - contains the expressions to be evaluated
+;;;    Purpose: 
+;;;       Uses EVAL to evaluate each expression in the list.
+(defun evalEach (lis)
+    (cond    ( (NULL (CDR lis)) (EVAL (CAR lis)))
+        ( T (EVAL (CAR lis) ) (evalEach (CDR lis)) )
+    )
+)

@@ -1,0 +1,3 @@
+select c.name , r.flightId from Customer c,Customer c2,Reservation r where c.custNr != "1999" and c2.custNr = "1999" and c.custNr = r.custNr and not exists( select * from Reservation r2 where r.flightId = r2.flightId and r.custNr = c.custNr));
+:;;;;;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ select count(f.flightId),f.flightId from Reservation f group by f.flightId having count(f.flightId) > 1;

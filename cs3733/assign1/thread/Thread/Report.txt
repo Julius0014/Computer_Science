@@ -1,0 +1,6 @@
+Julius Jenkins Ubh226
+A)The program is complete
+B) I just Modified My last code add the Thread fucntion and modafited bubblesort
+C) this is makefile; Just type make It should compile
+
+gcc -o thread-wordcountfreq  thread-wordcountfreg.c -lpthread

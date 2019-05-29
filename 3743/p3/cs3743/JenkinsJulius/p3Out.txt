@@ -1,0 +1,123 @@
+Beginning Customers
+CustNr   Name                 preferAirline        birthDt      gender
+111      Perry Noid           Spirit               2000-04-01   M   
+222      Melba Toast          American             1990-09-11   F   
+333      Pete Moss            Clampett             1992-03-03   M   
+444      Bill Board           American             1985-04-04   M   
+480      Anita Vacay          Spirit               1975-06-01   F   
+555      Jerry Tall           PoDunk               1927-04-15   M   
+666      Tom E Gunn           Clampett             1976-06-06   M   
+777      Bob Wire             PoDunk               1973-07-07   M   
+888      Ron DeVoux           American             1990-08-08   M   
+890      Ann T Freeze         ---                  ---          F   
+901      Peg Board            Delta                1987-04-04   F   
+902      Al B Tross           American             1957-07-12   M   
+903      B B Gunn             PoDunk               1976-09-09   F   
+904      Sally Mander         Delta                1995-09-04   F   
+999      Marcus Absent        Delta                1999-09-09   M   
+1999     Julius Jenkins       Delta                1992-09-09   M   
+Beginning Flights
+    flightId.... flightNm airline............. orig dest schedDt... depTm..... maxSeats numSeatsSold 
+    331          PD001    PoDunk               SAT  MCO  2018-03-03 NULL       30       30           
+    341          PD001    PoDunk               SAT  MCO  2018-03-04 NULL       30       30           
+    411          AH100    American             HOU  CDG  2018-04-01 08:00:00   130      25           
+    412          AH200    American             HOU  FLL  2018-04-01 06:00:00   130      125          
+    441          SH100    Spirit               IHC  FLL  2018-04-04 07:00:00   130      5            
+    442          SH110    Spirit               IHC  FLL  2018-04-04 15:00:00   130      0            
+    460          SF200    Spirit               FLL  IHC  2018-04-11 12:00:00   130      0            
+    462          SF200    Spirit               FLL  IHC  2018-04-12 12:00:00   130      50           
+    510          AS300    American             SAT  MCO  2018-05-10 10:30:00   130      5            
+    519          F333     PoDunk               SAT  MCO  2018-05-19 16:00:00   30       50           
+    532          PD002    PoDunk               HOU  SEG  2018-05-03 11:00:00   30       5            
+    604          AH200    American             HOU  FLL  2018-06-04 06:00:00   130      30           
+    705          CL123    Clampett             SAT  MCO  2018-07-05 04:00:00   30       0            
+    706          PD002    PoDunk               HOU  SEG  2018-07-06 NULL       30       0            
+    14 Rows
+Duplicate key error: Duplicate entry '1999' for key 'PRIMARY'
+Customers after I was added
+CustNr   Name                 preferAirline        birthDt      gender
+111      Perry Noid           Spirit               2000-04-01   M   
+222      Melba Toast          American             1990-09-11   F   
+333      Pete Moss            Clampett             1992-03-03   M   
+444      Bill Board           American             1985-04-04   M   
+480      Anita Vacay          Spirit               1975-06-01   F   
+555      Jerry Tall           PoDunk               1927-04-15   M   
+666      Tom E Gunn           Clampett             1976-06-06   M   
+777      Bob Wire             PoDunk               1973-07-07   M   
+888      Ron DeVoux           American             1990-08-08   M   
+890      Ann T Freeze         ---                  ---          F   
+901      Peg Board            Delta                1987-04-04   F   
+902      Al B Tross           American             1957-07-12   M   
+903      B B Gunn             PoDunk               1976-09-09   F   
+904      Sally Mander         Delta                1995-09-04   F   
+999      Marcus Absent        Delta                1999-09-09   M   
+1999     Julius Jenkins       Delta                1992-09-09   M   
+My reservations
+    custNr flightId.... reqSeatQty 
+    1999   331          2          
+    1999   510          2          
+    1999   705          2          
+    3 Rows
+Other customers on my flights
+    name.......................... custNr flightId.... 
+    Perry Noid                     111    331          
+    Perry Noid                     111    510          
+    Perry Noid                     111    705          
+    Melba Toast                    222    331          
+    Melba Toast                    222    510          
+    Melba Toast                    222    705          
+    Pete Moss                      333    331          
+    Pete Moss                      333    510          
+    Pete Moss                      333    705          
+    Bill Board                     444    331          
+    Bill Board                     444    510          
+    Bill Board                     444    705          
+    Anita Vacay                    480    331          
+    Anita Vacay                    480    510          
+    Anita Vacay                    480    705          
+    Jerry Tall                     555    331          
+    Jerry Tall                     555    510          
+    Jerry Tall                     555    705          
+    Tom E Gunn                     666    331          
+    Tom E Gunn                     666    510          
+    Tom E Gunn                     666    705          
+    Bob Wire                       777    331          
+    Bob Wire                       777    510          
+    Bob Wire                       777    705          
+    Ron DeVoux                     888    331          
+    Ron DeVoux                     888    510          
+    Ron DeVoux                     888    705          
+    Ann T Freeze                   890    331          
+    Ann T Freeze                   890    510          
+    Ann T Freeze                   890    705          
+    Peg Board                      901    331          
+    Peg Board                      901    510          
+    Peg Board                      901    705          
+    Al B Tross                     902    331          
+    Al B Tross                     902    510          
+    Al B Tross                     902    705          
+    B B Gunn                       903    331          
+    B B Gunn                       903    510          
+    B B Gunn                       903    705          
+    Sally Mander                   904    331          
+    Sally Mander                   904    510          
+    Sally Mander                   904    705          
+    Marcus Absent                  999    331          
+    Marcus Absent                  999    510          
+    Marcus Absent                  999    705          
+    45 Rows
+Flights Having more than 2 reservations
+    count(f.flightId).... flightId.... 
+    3                     331          
+    7                     341          
+    7                     412          
+    5                     441          
+    6                     510          
+    7                     519          
+    3                     532          
+    4                     705          
+    4                     706          
+    9 Rows
+Other customers on my flights after mine were deleted
+    name.......................... custNr flightId.... 
+    No results

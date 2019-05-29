@@ -1,0 +1,240 @@
+* CS3743 p1Input.txt
+* Nuke the Hash file if it exists
+ >> NUKE BOOK book.dat
+* Opening of a non-existent file should cause an error
+ >> OPEN BOOK book.data
+    **** ERROR: File does not exist or has invalid format: 'book.data'
+* Create the hash file
+ >> CREATE BOOK book.dat 19
+    Record size is 84
+ >> DUMP BOOK book.dat
+    Primary=19, HighOverflow=19, RecSize=84
+* Creating it again should cause an existence error
+ >> CREATE BOOK book.dat 17
+    Record size is 84
+    **** ERROR: file already exists
+* Open it
+ >> OPEN BOOK book.dat
+* #1 Insert some books
+ >> INSERT BOOK JOYPGM001,The Joys of Programming,TECH,PGMING,100
+    Hash RBN is 8
+ >> DUMP BOOK book.dat
+    Primary=19, HighOverflow=19, RecSize=84
+     8 Next=0
+        JOYPGM001   TECH        PGMING       100 The Joys of Programming
+ >> INSERT BOOK PYTHON001,Learn Python Without Getting Bit,S PRESS,PGMING,200
+    Hash RBN is 1
+ >> DUMP BOOK book.dat
+    Primary=19, HighOverflow=19, RecSize=84
+     1 Next=0
+        PYTHON001   S PRESS     PGMING       200 Learn Python Without Getting Bit
+     8 Next=0
+        JOYPGM001   TECH        PGMING       100 The Joys of Programming
+ >> INSERT BOOK SQLDBB001,Making Your DB Queries SQueeL,XYZ,DB,300
+    Hash RBN is 16
+ >> INSERT BOOK TECHDR001,My Technical Dream Job,TECH,PGMING,400
+    Hash RBN is 18
+ >> INSERT BOOK PERLLL001,Is PERL the Jewel of Programming,S PRESS,PGMING,500
+    Hash RBN is 16
+ >> DUMP BOOK book.dat
+    Primary=19, HighOverflow=20, RecSize=84
+     1 Next=0
+        PYTHON001   S PRESS     PGMING       200 Learn Python Without Getting Bit
+     8 Next=0
+        JOYPGM001   TECH        PGMING       100 The Joys of Programming
+    16 Next=20
+        SQLDBB001   XYZ         DB           300 Making Your DB Queries SQueeL
+    18 Next=0
+        TECHDR001   TECH        PGMING       400 My Technical Dream Job
+Overflow:
+    20 Next=0
+        PERLLL001   S PRESS     PGMING       500 Is PERL the Jewel of Programming
+* #2 Read an existing book
+ >> READ BOOK TECHDR001
+    .. Next=0
+        TECHDR001   TECH        PGMING       400 My Technical Dream Job
+* #3 Read should not find this one
+ >> READ BOOK JAVADD001
+    **** ERROR: record not found
+* #4 Insert an existing book - should cause an error
+ >> INSERT BOOK TECHDR001,My Technical Dream Job Again,TECH,PGMING,444
+    Hash RBN is 18
+    **** ERROR: record already exists
+ >> READ BOOK TECHDR001
+    .. Next=0
+        TECHDR001   TECH        PGMING       400 My Technical Dream Job
+* #5 Insert some books and some synonyms
+ >> INSERT BOOK JAVADD001,Java Isn't an Addiction,S PRESS,PGMING,600
+    Hash RBN is 2
+ >> INSERT BOOK LINUXX004,Learning Linux,XYZ,OS,700
+    Hash RBN is 10
+ >> INSERT BOOK COBOLL001,How Your Grandpa Coded in COBOL,S PRESS,PGMING,800
+    Hash RBN is 19
+ >> INSERT BOOK EXCELL001,Excel at Excell,MS PRESS,ACCOUNT,200
+    Hash RBN is 2
+ >> INSERT BOOK PRANKS001,Software Pranks,TECH,PGMING,300
+    Hash RBN is 1
+ >> DUMP BOOK book.dat
+    Primary=19, HighOverflow=22, RecSize=84
+     1 Next=22
+        PYTHON001   S PRESS     PGMING       200 Learn Python Without Getting Bit
+     2 Next=21
+        JAVADD001   S PRESS     PGMING       600 Java Isn't an Addiction
+     8 Next=0
+        JOYPGM001   TECH        PGMING       100 The Joys of Programming
+    10 Next=0
+        LINUXX004   XYZ         OS           700 Learning Linux
+    16 Next=20
+        SQLDBB001   XYZ         DB           300 Making Your DB Queries SQueeL
+    18 Next=0
+        TECHDR001   TECH        PGMING       400 My Technical Dream Job
+    19 Next=0
+        COBOLL001   S PRESS     PGMING       800 How Your Grandpa Coded in COBOL
+Overflow:
+    20 Next=0
+        PERLLL001   S PRESS     PGMING       500 Is PERL the Jewel of Programming
+    21 Next=0
+        EXCELL001   MS PRESS    ACCOUNT      200 Excel at Excell
+    22 Next=0
+        PRANKS001   TECH        PGMING       300 Software Pranks
+* #6 READ one that is on chain
+ >> READ BOOK PRANKS001
+    .. Next=0
+        PRANKS001   TECH        PGMING       300 Software Pranks
+* #7 Insert some more
+ >> INSERT BOOK ARTINT001,A.I. Practical Algorithms,S PRESS,PGMING,400
+    Hash RBN is 4
+ >> INSERT BOOK PYTADW001,Programming in Python,ADWES,PGMING,500
+    Hash RBN is 11
+ >> INSERT BOOK FUNDBS001,Fundamentals of Database Systems,PEARSON,DB,900
+    Hash RBN is 7
+ >> INSERT BOOK COMPILER1,Compilers,PEARSON,PGMING,1100
+    Hash RBN is 7
+ >> DUMP BOOK book.dat
+    Primary=19, HighOverflow=23, RecSize=84
+     1 Next=22
+        PYTHON001   S PRESS     PGMING       200 Learn Python Without Getting Bit
+     2 Next=21
+        JAVADD001   S PRESS     PGMING       600 Java Isn't an Addiction
+     4 Next=0
+        ARTINT001   S PRESS     PGMING       400 A.I. Practical Algorithms
+     7 Next=23
+        FUNDBS001   PEARSON     DB           900 Fundamentals of Database Systems
+     8 Next=0
+        JOYPGM001   TECH        PGMING       100 The Joys of Programming
+    10 Next=0
+        LINUXX004   XYZ         OS           700 Learning Linux
+    11 Next=0
+        PYTADW001   ADWES       PGMING       500 Programming in Python
+    16 Next=20
+        SQLDBB001   XYZ         DB           300 Making Your DB Queries SQueeL
+    18 Next=0
+        TECHDR001   TECH        PGMING       400 My Technical Dream Job
+    19 Next=0
+        COBOLL001   S PRESS     PGMING       800 How Your Grandpa Coded in COBOL
+Overflow:
+    20 Next=0
+        PERLLL001   S PRESS     PGMING       500 Is PERL the Jewel of Programming
+    21 Next=0
+        EXCELL001   MS PRESS    ACCOUNT      200 Excel at Excell
+    22 Next=0
+        PRANKS001   TECH        PGMING       300 Software Pranks
+    23 Next=0
+        COMPILER1   PEARSON     PGMING      1100 Compilers
+* #8 Read some that now exist
+ >> READ BOOK ARTINT001
+    .. Next=0
+        ARTINT001   S PRESS     PGMING       400 A.I. Practical Algorithms
+ >> READ BOOK JAVADD001
+    .. Next=21
+        JAVADD001   S PRESS     PGMING       600 Java Isn't an Addiction
+* #9 Read one that doesn't exist
+ >> READ BOOK DSTRUC001
+    **** ERROR: record not found
+* #10 Insert some further on the chain
+ >> INSERT BOOK INTROC001,Programming in C,S PRESS,PGMING,120
+    Hash RBN is 1
+ >> INSERT BOOK DSTRUC001,Data Structures in C,S PRESS,PGMING,240
+    Hash RBN is 7
+ >> DUMP BOOK book.dat
+    Primary=19, HighOverflow=25, RecSize=84
+     1 Next=24
+        PRANKS001   TECH        PGMING       300 Software Pranks
+     2 Next=21
+        JAVADD001   S PRESS     PGMING       600 Java Isn't an Addiction
+     4 Next=0
+        ARTINT001   S PRESS     PGMING       400 A.I. Practical Algorithms
+     7 Next=25
+        COMPILER1   PEARSON     PGMING      1100 Compilers
+     8 Next=0
+        JOYPGM001   TECH        PGMING       100 The Joys of Programming
+    10 Next=0
+        LINUXX004   XYZ         OS           700 Learning Linux
+    11 Next=0
+        PYTADW001   ADWES       PGMING       500 Programming in Python
+    16 Next=20
+        SQLDBB001   XYZ         DB           300 Making Your DB Queries SQueeL
+    18 Next=0
+        TECHDR001   TECH        PGMING       400 My Technical Dream Job
+    19 Next=0
+        COBOLL001   S PRESS     PGMING       800 How Your Grandpa Coded in COBOL
+Overflow:
+    20 Next=0
+        PERLLL001   S PRESS     PGMING       500 Is PERL the Jewel of Programming
+    21 Next=0
+        EXCELL001   MS PRESS    ACCOUNT      200 Excel at Excell
+    22 Next=0
+        PRANKS001   TECH        PGMING       300 Software Pranks
+    23 Next=0
+        COMPILER1   PEARSON     PGMING      1100 Compilers
+    24 Next=21
+        INTROC001   S PRESS     PGMING       120 Programming in C
+    25 Next=21
+        DSTRUC001   S PRESS     PGMING       240 Data Structures in C
+* #11 Read some that are further on a chain
+ >> READ BOOK INTROC001
+    .. Next=21
+        INTROC001   S PRESS     PGMING       120 Programming in C
+* #12 Update one that is in the primary, its next shouldn't change, but pages should be 222
+ >> UPDATE BOOK PYTHON001,Learn Python Without Getting Bit,S PRESS,PGMING,222
+    **** ERROR: record not found
+ >> READ BOOK PYTHON001
+    **** ERROR: record not found
+* #13 Update a Book that is on a chain
+ >> UPDATE BOOK COMPILER1,Compilers,PEARSON,PGMING,1222
+ >> DUMP BOOK book.dat
+    Primary=19, HighOverflow=25, RecSize=84
+     1 Next=24
+        PRANKS001   TECH        PGMING       300 Software Pranks
+     2 Next=21
+        JAVADD001   S PRESS     PGMING       600 Java Isn't an Addiction
+     4 Next=0
+        ARTINT001   S PRESS     PGMING       400 A.I. Practical Algorithms
+     7 Next=25
+        COMPILER1   PEARSON     PGMING      1100 Compilers
+     8 Next=0
+        JOYPGM001   TECH        PGMING       100 The Joys of Programming
+    10 Next=0
+        LINUXX004   XYZ         OS           700 Learning Linux
+    11 Next=0
+        PYTADW001   ADWES       PGMING       500 Programming in Python
+    16 Next=20
+        SQLDBB001   XYZ         DB           300 Making Your DB Queries SQueeL
+    18 Next=0
+        TECHDR001   TECH        PGMING       400 My Technical Dream Job
+    19 Next=0
+        COBOLL001   S PRESS     PGMING       800 How Your Grandpa Coded in COBOL
+Overflow:
+    20 Next=0
+        PERLLL001   S PRESS     PGMING       500 Is PERL the Jewel of Programming
+    21 Next=0
+        EXCELL001   MS PRESS    ACCOUNT      200 Excel at Excell
+    22 Next=0
+        PRANKS001   TECH        PGMING       300 Software Pranks
+    23 Next=0
+        COMPILER1   PEARSON     PGMING      1100 Compilers
+    24 Next=21
+        INTROC001   S PRESS     PGMING       120 Programming in C
+    25 Next=21
+        DSTRUC001   S PRESS     PGMING       240 Data Structures in C
+

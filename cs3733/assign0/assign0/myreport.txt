@@ -1,0 +1,9 @@
+ In this project  I hade a few issue still needd to be work out.
+I have a bug in my read whic string was longest and my readLineFile still neds to be complete but driver1 and two works even withe bugs.
+I found that driver2 gave me the most issue will readLineFile but fgets help at lot.
+I was only Person work on this project;
+i Also had troble with teh ake file;
+to compile my files
+gcc -g -o driver2 driver2.c myio.c
+gcc -g -o driver1 driver1.c myio.c
+Julius Jenkins

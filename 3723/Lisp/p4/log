@@ -1,0 +1,958 @@
+(QYN Q2  D1 Q3 Cough)
+(D1 Q3 COUGH)
+
+(QYN Q3  D2 D3 Fever)
+(D2 D3 FEVER)
+
+(QYN Q5  Q8 Q6 Tenderness in abdomen)
+(Q8 Q6 TENDERNESS IN ABDOMEN)
+
+(QYN Q6  D7 Q7 Pain in throat)
+(D7 Q7 PAIN IN THROAT)
+
+(QYN Q7  D6 D5 Fever)
+(D6 D5 FEVER)
+
+(QYN Q8  D9 D8 X-ray shows stones)
+(D9 D8 X-RAY SHOWS STONES)
+
+(DIAG D1 Treat common cold)
+*** - EVAL: undefined function DIAG
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of (FDEFINITION 'DIAG).
+RETRY          :R2      Retry
+STORE-VALUE    :R3      Input a new value for (FDEFINITION 'DIAG).
+SKIP           :R4      skip (DIAG D1 TREAT ...)
+RETRY          :R5      retry (DIAG D1 TREAT ...)
+STOP           :R6      stop loading file /home/ubh226/courses/cs/3723/Lisp/p4/p4LispRun.txt
+ABORT          :R7      Abort debug loop
+SKIP           :R8      skip (QYN Q1 Q5 ...)
+RETRY          :R9      retry (QYN Q1 Q5 ...)
+STOP           :R10     stop loading file /home/ubh226/courses/cs/3723/Lisp/p4/p4LispRun.txt
+ABORT          :R11     Abort debug loop
+ABORT          :R12     Abort main loop
+Break 3 [4]> (load "p4LispDef.txt" :echo T :print T)
+;;    Loading file p4LispDef.txt ...
+;;; putp 
+;;;    Parameters:
+;;;       symbol   - symbol to be given the property
+;;;       ht       - hash table to store the symbol and its property value
+;;;       value    - the property value
+;;;    Purpose:
+;;;       stores the property value for the symbol in the specified hash table
+(defun putp (symbol ht value)
+    (setf (gethash symbol ht) value) )
+PUTP
+
+    
+;;; getp 
+;;;    Parameters:
+;;;       symbol   - symbol about which we want its property value
+;;;       ht       - hash table to store the symbol and its property value
+;;;    Purpose:
+;;;       returns the property value for the symbol in the specified hash table
+;;;    Returns
+;;;       The property value for the symbol in the specified hash table.
+;;;       If not found, NIL is returned.
+(defun getp (symbol ht)
+     (gethash symbol ht) )
+GETP
+
+     
+;;; set up question and diag hash tables
+(setf question-HT (MAKE-HASH-TABLE))
+#S(HASH-TABLE :TEST FASTHASH-EQL)
+
+(setf diag-HT (MAKE-HASH-TABLE))
+#S(HASH-TABLE :TEST FASTHASH-EQL)
+
+
+;;; since the key for both the symptom and isa hash tables is a list,
+;;; we have to tell LISP to use EQUAL for the entry comparison instead of EQ.
+
+(setf symptom-HT (MAKE-HASH-TABLE  :test #'equal))
+#S(HASH-TABLE :TEST FASTHASH-EQUAL)
+
+(setf isa-HT (MAKE-HASH-TABLE  :test #'equal))
+#S(HASH-TABLE :TEST FASTHASH-EQUAL)
+
+
+;;; qyn macro
+;;; Parameters:
+;;;    qid - unique ID of a question
+;;;    ex - the rest of the arguments make up a list which represents the question
+;;; Purpose:
+;;;    Inserts an entry into the question-HT with qid as the key and ex as the value.
+;;; Notes:
+;;;    A macro is used instead of a function so that the arguments do not have to be 
+;;;    quoted.
+
+(defmacro qyn (qid &rest ex)
+    `(putp ' ,qid question-HT  ' ,ex ) )
+QYN
+
+
+;;; clearSymptoms 
+;;;    Parameters:
+;;;       n/a
+;;;    Purpose:
+;;;       Clears (i.e., deletes) all entries in the symptom-HT.
+;;;    Returns:
+;;;       n/a
+
+(defun clearSymptoms()
+   (clrhash symptom-HT))
+CLEARSYMPTOMS
+ 
+;;    Loaded file p4LispDef.txt
+T
+Break 3 [4]> (load "p4Lisp.txt" :echo T :print T)
+;;    Loading file p4Lisp.txt ...
+        )
+*** - READ from #<IO ECHO-STREAM #<INPUT BUFFERED FILE-STREAM CHARACTER #P"p4Lisp.txt" @1> #<IO SYNONYM-STREAM *DEBUG-IO*>>: an object cannot start with #\)
+The following restarts are available:
+ABORT          :R1      Abort debug loop
+SKIP           :R2      skip (DIAG D1 TREAT ...)
+RETRY          :R3      retry (DIAG D1 TREAT ...)
+STOP           :R4      stop loading file /home/ubh226/courses/cs/3723/Lisp/p4/p4LispRun.txt
+ABORT          :R5      Abort debug loop
+SKIP           :R6      skip (QYN Q1 Q5 ...)
+RETRY          :R7      retry (QYN Q1 Q5 ...)
+STOP           :R8      stop loading file /home/ubh226/courses/cs/3723/Lisp/p4/p4LispRun.txt
+ABORT          :R9      Abort debug loop
+ABORT          :R10     Abort main loop
+Break 4 [5]> (load "p4Lisp.txt" :echo T :print T)
+;;     Loading file p4Lisp.txt ...
+
+(defmacro qyn (qid &rest ex)
+    `(putp ' ,qid question-HT  ' ,ex ) )
+WARNING: DEFUN/DEFMACRO: redefining macro QYN in /home/ubh226/courses/cs/3723/Lisp/p4/p4Lisp.txt, was defined in /home/ubh226/courses/cs/3723/Lisp/p4/p4LispDef.txt
+QYN
+
+
+(defmacro diag (qid &rest ex)
+    `(putp ' ,qid  diag-HT ' ,ex ) )
+DIAG
+
+(defmacro isa (qid &rest ex)
+    `(putp ' ,qid  isa-HT ' ,ex ) 
+    )
+ISA
+
+(defmacro symptom (qid &rest f)
+    ( setf qid (cons qid ()))
+    (setf qid (append qid f))
+    (putp  qid  symptom-HT  ' T )
+  
+  (cond (  (null `(getp qid isa-HT ) )  )
+      (T (putp (getp qid isa-HT) symptom-HT T))
+      )
+    )
+SYMPTOM
+
+;;; PRINTWOPLIS
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Helper function to PRINTWOP, prints out
+;;;       each atom of a list without the top level
+;;;       parentheses.
+(defun printTrLis (lis)
+        (cond   ( (NULL lis) T)
+                ( T (princ (CAR lis)) (PRINC " ") (printTRLis (CDR lis)))
+        )
+)
+PRINTTRLIS
+
+;;; PRINTWOP
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Prints out lis wihout parentheses if its an atom.
+;;;       If it is a list, call PRINTWOPLIS.
+(defun printTr (lis )
+        (cond   ( (NULL lis) (PRINC NIL) T)
+                ( (ATOM lis) (PRINC lis) T )
+                (T  (printTRLis lis))
+        )
+)
+PRINTTR
+
+;;; PRINTWOPLIS
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Helper function to PRINTWOP, prints out
+;;;       each atom of a list without the top level
+;;;       parentheses.
+(defun printWOPLis (lis)
+        (cond   ( (NULL lis) T)
+                ( T (printWOP(CAR lis)) (PRINC " ") (printWOPLis (CDR lis)))
+        )
+)
+PRINTWOPLIS
+
+;;; PRINTWOP
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Prints out lis wihout parentheses if its an atom.
+;;;       If it is a list, call PRINTWOPLIS.
+(defun printwop (lis )
+
+        (cond   ( (NULL lis) (PRINC NIL) T)
+                ( (ATOM lis) (PRINC lis) T )
+                (T  (printWOPLis lis))
+        )
+)
+PRINTWOP
+
+
+
+(defun pTreeYN ( indent root yn)
+    (printSpace indent)
+
+    (cond ( (null (getp root question-HT))
+                 (printwop( list yn root "Diagnosis:" (getp root diag-HT))) )
+        (t (cond ( (null yn)
+                 (printwop (list root "Question:" (cddr (getp root question-ht)) "?"))
+                   )
+                (t (printwop (list yn root "Question:" (cddr (getp root question-hT)) "?"))
+                   )) 
+           (terpri)
+           (setf yn "Y:")
+           (pTreeYN (+ indent 1) (car (getp root question-HT)) yn)
+           (terpri)
+           (setf yn "N:")
+           (ptreeYN (+ indent 1) (cadr (getp root question-HT)) yn))
+   ))
+PTREEYN
+ 
+                 
+(defun printindent (i)
+    (cond ( ( eql i 0) nil)
+          (T  (princ "   ") (printindent (- i 1)))
+        )
+)
+PRINTINDENT
+
+(DEFUN printTree(ROOT)
+             (pTreeYN 0 root nil)
+)
+PRINTTREE
+   
+(defun triage()
+    (terpri)
+    (setf YN (getp (cddr (getp root question-ht)) symptom-ht))
+
+     (cond ((not(null (getp root diag-ht))) (princ (getp root diag-ht)))
+         ((null yn)
+              (printTr (list "ID: " root (getp root question-ht) "N"))
+               (setf root (Cadr (getp root question-ht))) (triage))
+          ( T 
+           (printTR (list "ID: " root (getp root question-ht) "Y"))
+           (setf root (Car (getp root question-ht))) (triage))
+      )
+
+)
+TRIAGE
+
+
+
+
+;;     Loaded file p4Lisp.txt
+T
+Break 4 [5]> (load "p4Lisp.txt" :echo T :print T)
+;;     Loading file p4Lisp.txt ...
+
+(defmacro diag (qid &rest ex)
+    `(putp ' ,qid  diag-HT ' ,ex ) )
+DIAG
+
+(defmacro isa (qid &rest ex)
+    `(putp ' ,qid  isa-HT ' ,ex ) 
+    )
+ISA
+
+(defmacro symptom (qid &rest f)
+    ( setf qid (cons qid ()))
+    (setf qid (append qid f))
+    (putp  qid  symptom-HT  ' T )
+  
+  (cond (  (null `(getp qid isa-HT ) )  )
+      (T (putp (getp qid isa-HT) symptom-HT T))
+      )
+    )
+SYMPTOM
+
+;;; PRINTWOPLIS
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Helper function to PRINTWOP, prints out
+;;;       each atom of a list without the top level
+;;;       parentheses.
+(defun printTrLis (lis)
+        (cond   ( (NULL lis) T)
+                ( T (princ (CAR lis)) (PRINC " ") (printTRLis (CDR lis)))
+        )
+)
+PRINTTRLIS
+
+;;; PRINTWOP
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Prints out lis wihout parentheses if its an atom.
+;;;       If it is a list, call PRINTWOPLIS.
+(defun printTr (lis )
+        (cond   ( (NULL lis) (PRINC NIL) T)
+                ( (ATOM lis) (PRINC lis) T )
+                (T  (printTRLis lis))
+        )
+)
+PRINTTR
+
+;;; PRINTWOPLIS
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Helper function to PRINTWOP, prints out
+;;;       each atom of a list without the top level
+;;;       parentheses.
+(defun printWOPLis (lis)
+        (cond   ( (NULL lis) T)
+                ( T (printWOP(CAR lis)) (PRINC " ") (printWOPLis (CDR lis)))
+        )
+)
+PRINTWOPLIS
+
+;;; PRINTWOP
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Prints out lis wihout parentheses if its an atom.
+;;;       If it is a list, call PRINTWOPLIS.
+(defun printwop (lis )
+
+        (cond   ( (NULL lis) (PRINC NIL) T)
+                ( (ATOM lis) (PRINC lis) T )
+                (T  (printWOPLis lis))
+        )
+)
+PRINTWOP
+
+
+
+(defun pTreeYN ( indent root yn)
+    (printSpace indent)
+
+    (cond ( (null (getp root question-HT))
+                 (printwop( list yn root "Diagnosis:" (getp root diag-HT))) )
+        (t (cond ( (null yn)
+                 (printwop (list root "Question:" (cddr (getp root question-ht)) "?"))
+                   )
+                (t (printwop (list yn root "Question:" (cddr (getp root question-hT)) "?"))
+                   )) 
+           (terpri)
+           (setf yn "Y:")
+           (pTreeYN (+ indent 1) (car (getp root question-HT)) yn)
+           (terpri)
+           (setf yn "N:")
+           (ptreeYN (+ indent 1) (cadr (getp root question-HT)) yn))
+   ))
+PTREEYN
+ 
+                 
+(defun printindent (i)
+    (cond ( ( eql i 0) nil)
+          (T  (princ "   ") (printindent (- i 1)))
+        )
+)
+PRINTINDENT
+
+(DEFUN printTree(ROOT)
+             (pTreeYN 0 root nil)
+)
+PRINTTREE
+   
+(defun triage()
+    (terpri)
+    (setf YN (getp (cddr (getp root question-ht)) symptom-ht))
+
+     (cond ((not(null (getp root diag-ht))) (princ (getp root diag-ht)))
+         ((null yn)
+              (printTr (list "ID: " root (getp root question-ht) "N"))
+               (setf root (Cadr (getp root question-ht))) (triage))
+          ( T 
+           (printTR (list "ID: " root (getp root question-ht) "Y"))
+           (setf root (Car (getp root question-ht))) (triage))
+      )
+
+)
+TRIAGE
+
+
+
+
+;;     Loaded file p4Lisp.txt
+T
+Break 4 [5]> (load "p4Lisp.txt" :echo T :print T)
+;;     Loading file p4Lisp.txt ...
+;;;;
+;;;;uses putp to record the diagnosisID as the key and diagnosis (which can be many atoms) as the value in the diagnosis-HT.
+;;;;
+;;;;
+;;;;
+(defmacro diag (qid &rest ex)
+    `(putp ' ,qid  diag-HT ' ,ex ) )
+DIAG
+
+(defmacro isa (qid &rest ex)
+    `(putp ' ,qid  isa-HT ' ,ex ) 
+    )
+ISA
+
+(defmacro symptom (qid &rest f)
+    ( setf qid (cons qid ()))
+    (setf qid (append qid f))
+    (putp  qid  symptom-HT  ' T )
+  
+  (cond (  (null `(getp qid isa-HT ) )  )
+      (T (putp (getp qid isa-HT) symptom-HT T))
+      )
+    )
+SYMPTOM
+
+;;; PRINTWOPLIS
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Helper function to PRINTWOP, prints out
+;;;       each atom of a list without the top level
+;;;       parentheses.
+(defun printTrLis (lis)
+        (cond   ( (NULL lis) T)
+                ( T (princ (CAR lis)) (PRINC " ") (printTRLis (CDR lis)))
+        )
+)
+PRINTTRLIS
+
+;;; PRINTWOP
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Prints out lis wihout parentheses if its an atom.
+;;;       If it is a list, call PRINTWOPLIS.
+(defun printTr (lis )
+        (cond   ( (NULL lis) (PRINC NIL) T)
+                ( (ATOM lis) (PRINC lis) T )
+                (T  (printTRLis lis))
+        )
+)
+PRINTTR
+
+;;; PRINTWOPLIS
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Helper function to PRINTWOP, prints out
+;;;       each atom of a list without the top level
+;;;       parentheses.
+(defun printWOPLis (lis)
+        (cond   ( (NULL lis) T)
+                ( T (printWOP(CAR lis)) (PRINC " ") (printWOPLis (CDR lis)))
+        )
+)
+PRINTWOPLIS
+
+;;; PRINTWOP
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Prints out lis wihout parentheses if its an atom.
+;;;       If it is a list, call PRINTWOPLIS.
+(defun printwop (lis )
+
+        (cond   ( (NULL lis) (PRINC NIL) T)
+                ( (ATOM lis) (PRINC lis) T )
+                (T  (printWOPLis lis))
+        )
+)
+PRINTWOP
+
+
+
+(defun pTreeYN ( indent root yn)
+    (printSpace indent)
+
+    (cond ( (null (getp root question-HT))
+                 (printwop( list yn root "Diagnosis:" (getp root diag-HT))) )
+        (t (cond ( (null yn)
+                 (printwop (list root "Question:" (cddr (getp root question-ht)) "?"))
+                   )
+                (t (printwop (list yn root "Question:" (cddr (getp root question-hT)) "?"))
+                   )) 
+           (terpri)
+           (setf yn "Y:")
+           (pTreeYN (+ indent 1) (car (getp root question-HT)) yn)
+           (terpri)
+           (setf yn "N:")
+           (ptreeYN (+ indent 1) (cadr (getp root question-HT)) yn))
+   ))
+PTREEYN
+ 
+                 
+(defun printindent (i)
+    (cond ( ( eql i 0) nil)
+          (T  (princ "   ") (printindent (- i 1)))
+        )
+)
+PRINTINDENT
+
+(DEFUN printTree(ROOT)
+             (pTreeYN 0 root nil)
+)
+PRINTTREE
+   
+(defun triage()
+    (terpri)
+    (setf YN (getp (cddr (getp root question-ht)) symptom-ht))
+
+     (cond ((not(null (getp root diag-ht))) (princ (getp root diag-ht)))
+         ((null yn)
+              (printTr (list "ID: " root (getp root question-ht) "N"))
+               (setf root (Cadr (getp root question-ht))) (triage))
+          ( T 
+           (printTR (list "ID: " root (getp root question-ht) "Y"))
+           (setf root (Car (getp root question-ht))) (triage))
+      )
+
+)
+TRIAGE
+
+
+
+
+;;     Loaded file p4Lisp.txt
+T
+Break 4 [5]> (load "p4LispDef.txt" :echo T :print T)
+;;     Loading file p4LispDef.txt ...
+;;; putp 
+;;;    Parameters:
+;;;       symbol   - symbol to be given the property
+;;;       ht       - hash table to store the symbol and its property value
+;;;       value    - the property value
+;;;    Purpose:
+;;;       stores the property value for the symbol in the specified hash table
+(defun putp (symbol ht value)
+    (setf (gethash symbol ht) value) )
+PUTP
+
+    
+;;; getp 
+;;;    Parameters:
+;;;       symbol   - symbol about which we want its property value
+;;;       ht       - hash table to store the symbol and its property value
+;;;    Purpose:
+;;;       returns the property value for the symbol in the specified hash table
+;;;    Returns
+;;;       The property value for the symbol in the specified hash table.
+;;;       If not found, NIL is returned.
+(defun getp (symbol ht)
+     (gethash symbol ht) )
+GETP
+
+     
+;;; set up question and diag hash tables
+(setf question-HT (MAKE-HASH-TABLE))
+#S(HASH-TABLE :TEST FASTHASH-EQL)
+
+(setf diag-HT (MAKE-HASH-TABLE))
+#S(HASH-TABLE :TEST FASTHASH-EQL)
+
+
+;;; since the key for both the symptom and isa hash tables is a list,
+;;; we have to tell LISP to use EQUAL for the entry comparison instead of EQ.
+
+(setf symptom-HT (MAKE-HASH-TABLE  :test #'equal))
+#S(HASH-TABLE :TEST FASTHASH-EQUAL)
+
+(setf isa-HT (MAKE-HASH-TABLE  :test #'equal))
+#S(HASH-TABLE :TEST FASTHASH-EQUAL)
+
+
+;;; qyn macro
+;;; Parameters:
+;;;    qid - unique ID of a question
+;;;    ex - the rest of the arguments make up a list which represents the question
+;;; Purpose:
+;;;    Inserts an entry into the question-HT with qid as the key and ex as the value.
+;;; Notes:
+;;;    A macro is used instead of a function so that the arguments do not have to be 
+;;;    quoted.
+
+(defmacro qyn (qid &rest ex)
+    `(putp ' ,qid question-HT  ' ,ex ) )
+WARNING: DEFUN/DEFMACRO: redefining macro QYN in /home/ubh226/courses/cs/3723/Lisp/p4/p4LispDef.txt, was defined in /home/ubh226/courses/cs/3723/Lisp/p4/p4Lisp.txt
+QYN
+
+
+;;; clearSymptoms 
+;;;    Parameters:
+;;;       n/a
+;;;    Purpose:
+;;;       Clears (i.e., deletes) all entries in the symptom-HT.
+;;;    Returns:
+;;;       n/a
+
+(defun clearSymptoms()
+   (clrhash symptom-HT))
+CLEARSYMPTOMS
+ 
+;;     Loaded file p4LispDef.txt
+T
+Break 4 [5]> (load "p4LispRun.txt" :echo T :print T)
+;;     Loading file p4LispRun.txt ...
+;;; p4LispRun.txt - defines the diagnosis tree and runs your functions
+
+(QYN Q1  Q5 Q2 Pain)
+(Q5 Q2 PAIN)
+
+(QYN Q2  D1 Q3 Cough)
+(D1 Q3 COUGH)
+
+(QYN Q3  D2 D3 Fever)
+(D2 D3 FEVER)
+
+(QYN Q5  Q8 Q6 Tenderness in abdomen)
+(Q8 Q6 TENDERNESS IN ABDOMEN)
+
+(QYN Q6  D7 Q7 Pain in throat)
+(D7 Q7 PAIN IN THROAT)
+
+(QYN Q7  D6 D5 Fever)
+(D6 D5 FEVER)
+
+(QYN Q8  D9 D8 X-ray shows stones)
+(D9 D8 X-RAY SHOWS STONES)
+
+(DIAG D1 Treat common cold)
+(TREAT COMMON COLD)
+
+(DIAG D2 Treat Flu)
+(TREAT FLU)
+
+(DIAG D3 Thank you for visiting)
+(THANK YOU FOR VISITING)
+
+(DIAG d5 Prescribe acetaminophen)
+(PRESCRIBE ACETAMINOPHEN)
+
+(DIAG D6 Treat Flu)
+(TREAT FLU)
+
+(DIAG D7 Administer Strep Test)
+(ADMINISTER STREP TEST)
+
+(DIAG D8 Schedule appendectomy)
+(SCHEDULE APPENDECTOMY)
+
+(DIAG d9 Treat kindey stones)
+(TREAT KINDEY STONES)
+
+
+(isa (tenderness in abdomen) pain)
+(PAIN)
+
+(isa (pain in throat) pain)
+(PAIN)
+
+(isa (x-ray shows stones) stones)
+(STONES)
+
+
+(setf ROOT 'Q1)
+Q1
+
+(printTree ROOT)
+*** - EVAL: undefined function PRINTSPACE
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of (FDEFINITION 'PRINTSPACE).
+RETRY          :R2      Retry
+STORE-VALUE    :R3      Input a new value for (FDEFINITION 'PRINTSPACE).
+SKIP           :R4      skip (PRINTTREE ROOT)
+RETRY          :R5      retry (PRINTTREE ROOT)
+STOP           :R6      stop loading file /home/ubh226/courses/cs/3723/Lisp/p4/p4LispRun.txt
+ABORT          :R7      Abort debug loop
+ABORT          :R8      Abort debug loop
+SKIP           :R9      skip (DIAG D1 TREAT ...)
+RETRY          :R10     retry (DIAG D1 TREAT ...)
+STOP           :R11     stop loading file /home/ubh226/courses/cs/3723/Lisp/p4/p4LispRun.txt
+ABORT          :R12     Abort debug loop
+SKIP           :R13     skip (QYN Q1 Q5 ...)
+RETRY          :R14     retry (QYN Q1 Q5 ...)
+STOP           :R15     stop loading file /home/ubh226/courses/cs/3723/Lisp/p4/p4LispRun.txt
+ABORT          :R16     Abort debug loop
+ABORT          :R17     Abort main loop
+Break 5 [6]> (load "p4Lisp.txt" :echo T :print T)
+;;      Loading file p4Lisp.txt ...
+;;;;
+;;;;uses putp to record the diagnosisID as the key and diagnosis (which can be many atoms) as the value in the diagnosis-HT.
+;;;;
+;;;;
+;;;;
+(defmacro diag (qid &rest ex)
+    `(putp ' ,qid  diag-HT ' ,ex ) )
+DIAG
+
+(defmacro isa (qid &rest ex)
+    `(putp ' ,qid  isa-HT ' ,ex ) 
+    )
+ISA
+
+(defmacro symptom (qid &rest f)
+    ( setf qid (cons qid ()))
+    (setf qid (append qid f))
+    (putp  qid  symptom-HT  ' T )
+  
+  (cond (  (null `(getp qid isa-HT ) )  )
+      (T (putp (getp qid isa-HT) symptom-HT T))
+      )
+    )
+SYMPTOM
+
+;;; PRINTWOPLIS
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Helper function to PRINTWOP, prints out
+;;;       each atom of a list without the top level
+;;;       parentheses.
+(defun printTrLis (lis)
+        (cond   ( (NULL lis) T)
+                ( T (princ (CAR lis)) (PRINC " ") (printTRLis (CDR lis)))
+        )
+)
+PRINTTRLIS
+
+;;; PRINTWOP
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Prints out lis wihout parentheses if its an atom.
+;;;       If it is a list, call PRINTWOPLIS.
+(defun printTr (lis )
+        (cond   ( (NULL lis) (PRINC NIL) T)
+                ( (ATOM lis) (PRINC lis) T )
+                (T  (printTRLis lis))
+        )
+)
+PRINTTR
+
+;;; PRINTWOPLIS
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Helper function to PRINTWOP, prints out
+;;;       each atom of a list without the top level
+;;;       parentheses.
+(defun printWOPLis (lis)
+        (cond   ( (NULL lis) T)
+                ( T (printWOP(CAR lis)) (PRINC " ") (printWOPLis (CDR lis)))
+        )
+)
+PRINTWOPLIS
+
+;;; PRINTWOP
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Prints out lis wihout parentheses if its an atom.
+;;;       If it is a list, call PRINTWOPLIS.
+(defun printwop (lis )
+
+        (cond   ( (NULL lis) (PRINC NIL) T)
+                ( (ATOM lis) (PRINC lis) T )
+                (T  (printWOPLis lis))
+        )
+)
+PRINTWOP
+
+
+
+(defun pTreeYN ( indent root yn)
+    (printindent indent)
+
+    (cond ( (null (getp root question-HT))
+                 (printwop( list yn root "Diagnosis:" (getp root diag-HT))) )
+        (t (cond ( (null yn)
+                 (printwop (list root "Question:" (cddr (getp root question-ht)) "?"))
+                   )
+                (t (printwop (list yn root "Question:" (cddr (getp root question-hT)) "?"))
+                   )) 
+           (terpri)
+           (setf yn "Y:")
+           (pTreeYN (+ indent 1) (car (getp root question-HT)) yn)
+           (terpri)
+           (setf yn "N:")
+           (ptreeYN (+ indent 1) (cadr (getp root question-HT)) yn))
+   ))
+PTREEYN
+ 
+                 
+(defun printindent (i)
+    (cond ( ( eql i 0) nil)
+          (T  (princ "   ") (printindent (- i 1)))
+        )
+)
+PRINTINDENT
+
+(DEFUN printTree(ROOT)
+             (pTreeYN 0 root nil)
+)
+PRINTTREE
+   
+(defun triage()
+    (terpri)
+    (setf YN (getp (cddr (getp root question-ht)) symptom-ht))
+
+     (cond ((not(null (getp root diag-ht))) (princ (getp root diag-ht)))
+         ((null yn)
+              (printTr (list "ID: " root (getp root question-ht) "N"))
+               (setf root (Cadr (getp root question-ht))) (triage))
+          ( T 
+           (printTR (list "ID: " root (getp root question-ht) "Y"))
+           (setf root (Car (getp root question-ht))) (triage))
+      )
+
+)
+TRIAGE
+
+
+
+
+;;      Loaded file p4Lisp.txt
+T
+Break 5 [6]> (load "p4LispRun.txt" :echo T :print T)
+;;      Loading file p4LispRun.txt ...
+;;; p4LispRun.txt - defines the diagnosis tree and runs your functions
+
+(QYN Q1  Q5 Q2 Pain)
+(Q5 Q2 PAIN)
+
+(QYN Q2  D1 Q3 Cough)
+(D1 Q3 COUGH)
+
+(QYN Q3  D2 D3 Fever)
+(D2 D3 FEVER)
+
+(QYN Q5  Q8 Q6 Tenderness in abdomen)
+(Q8 Q6 TENDERNESS IN ABDOMEN)
+
+(QYN Q6  D7 Q7 Pain in throat)
+(D7 Q7 PAIN IN THROAT)
+
+(QYN Q7  D6 D5 Fever)
+(D6 D5 FEVER)
+
+(QYN Q8  D9 D8 X-ray shows stones)
+(D9 D8 X-RAY SHOWS STONES)
+
+(DIAG D1 Treat common cold)
+(TREAT COMMON COLD)
+
+(DIAG D2 Treat Flu)
+(TREAT FLU)
+
+(DIAG D3 Thank you for visiting)
+(THANK YOU FOR VISITING)
+
+(DIAG d5 Prescribe acetaminophen)
+(PRESCRIBE ACETAMINOPHEN)
+
+(DIAG D6 Treat Flu)
+(TREAT FLU)
+
+(DIAG D7 Administer Strep Test)
+(ADMINISTER STREP TEST)
+
+(DIAG D8 Schedule appendectomy)
+(SCHEDULE APPENDECTOMY)
+
+(DIAG d9 Treat kindey stones)
+(TREAT KINDEY STONES)
+
+
+(isa (tenderness in abdomen) pain)
+(PAIN)
+
+(isa (pain in throat) pain)
+(PAIN)
+
+(isa (x-ray shows stones) stones)
+(STONES)
+
+
+(setf ROOT 'Q1)
+Q1
+
+(printTree ROOT)Q1 Question: PAIN  ? 
+   Y: Q5 Question: TENDERNESS IN ABDOMEN  ? 
+      Y: Q8 Question: X-RAY SHOWS STONES  ? 
+         Y: D9 Diagnosis: TREAT KINDEY STONES  
+         N: D8 Diagnosis: SCHEDULE APPENDECTOMY  
+      N: Q6 Question: PAIN IN THROAT  ? 
+         Y: D7 Diagnosis: ADMINISTER STREP TEST  
+         N: Q7 Question: FEVER  ? 
+            Y: D6 Diagnosis: TREAT FLU  
+            N: D5 Diagnosis: PRESCRIBE ACETAMINOPHEN  
+   N: Q2 Question: COUGH  ? 
+      Y: D1 Diagnosis: TREAT COMMON COLD  
+      N: Q3 Question: FEVER  ? 
+         Y: D2 Diagnosis: TREAT FLU  
+         N: D3 Diagnosis: THANK YOU FOR VISITING  
+T
+
+
+(Symptom fever)
+T
+
+(symptom pain in throat)
+T
+
+(triage)
+ID:  Q1 (Q5 Q2 PAIN) Y 
+ID:  Q5 (Q8 Q6 TENDERNESS IN ABDOMEN) N 
+ID:  Q6 (D7 Q7 PAIN IN THROAT) Y 
+(ADMINISTER STREP TEST)
+(ADMINISTER STREP TEST)
+
+
+(CLEARSYMPTOMS)
+#S(HASH-TABLE :TEST FASTHASH-EQUAL)
+
+
+(symptom fever)
+T
+
+(triage)
+(ADMINISTER STREP TEST)
+(ADMINISTER STREP TEST)
+
+
+(CLEARSYMPTOMS)
+#S(HASH-TABLE :TEST FASTHASH-EQUAL)
+
+
+(symptom tenderness in abdomen)
+T
+
+(symptom x-ray shows stones)
+T
+
+(triage)
+(ADMINISTER STREP TEST)
+(ADMINISTER STREP TEST)
+;;      Loaded file p4LispRun.txt
+T

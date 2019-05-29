@@ -1,0 +1,3 @@
+ubh226 Julius Jenkins
+BALANCE == a*b-c*d is equal the reason is because global varibles have shared memory between the main and threads.
+Threads can "share" variables in the initialized data, uninitialized data, and heap segments;

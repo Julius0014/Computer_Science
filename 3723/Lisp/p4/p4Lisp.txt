@@ -1,0 +1,113 @@
+;;;;
+;;;;uses putp to record the diagnosisID as the key and diagnosis (which can be many atoms) as the value in the diagnosis-HT.
+;;;;
+;;;;
+;;;;
+(defmacro diag (qid &rest ex)
+    `(putp ' ,qid  diag-HT ' ,ex ) )
+(defmacro isa (qid &rest ex)
+    `(putp ' ,qid  isa-HT ' ,ex ) 
+    )
+(defmacro symptom (qid &rest f)
+    ( setf qid (cons qid ()))
+    (setf qid (append qid f))
+    (putp  qid  symptom-HT  ' T )
+  
+  (cond (  (null `(getp qid isa-HT ) )  )
+      (T (putp (getp qid isa-HT) symptom-HT T))
+      )
+    )
+;;; PRINTWOPLIS
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Helper function to PRINTWOP, prints out
+;;;       each atom of a list without the top level
+;;;       parentheses.
+(defun printTrLis (lis)
+        (cond   ( (NULL lis) T)
+                ( T (princ (CAR lis)) (PRINC " ") (printTRLis (CDR lis)))
+        )
+)
+;;; PRINTWOP
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Prints out lis wihout parentheses if its an atom.
+;;;       If it is a list, call PRINTWOPLIS.
+(defun printTr (lis )
+        (cond   ( (NULL lis) (PRINC NIL) T)
+                ( (ATOM lis) (PRINC lis) T )
+                (T  (printTRLis lis))
+        )
+)
+;;; PRINTWOPLIS
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Helper function to PRINTWOP, prints out
+;;;       each atom of a list without the top level
+;;;       parentheses.
+(defun printWOPLis (lis)
+        (cond   ( (NULL lis) T)
+                ( T (printWOP(CAR lis)) (PRINC " ") (printWOPLis (CDR lis)))
+        )
+)
+;;; PRINTWOP
+;;;    Parameters:
+;;;       lis - contains the atoms to be printed
+;;;    Purpose:
+;;;       Prints out lis wihout parentheses if its an atom.
+;;;       If it is a list, call PRINTWOPLIS.
+(defun printwop (lis )
+
+        (cond   ( (NULL lis) (PRINC NIL) T)
+                ( (ATOM lis) (PRINC lis) T )
+                (T  (printWOPLis lis))
+        )
+)
+
+
+(defun pTreeYN ( indent root yn)
+    (printindent indent)
+
+    (cond ( (null (getp root question-HT))
+                 (printwop( list yn root "Diagnosis:" (getp root diag-HT))) )
+        (t (cond ( (null yn)
+                 (printwop (list root "Question:" (cddr (getp root question-ht)) "?"))
+                   )
+                (t (printwop (list yn root "Question:" (cddr (getp root question-hT)) "?"))
+                   )) 
+           (terpri)
+           (setf yn "Y:")
+           (pTreeYN (+ indent 1) (car (getp root question-HT)) yn)
+           (terpri)
+           (setf yn "N:")
+           (ptreeYN (+ indent 1) (cadr (getp root question-HT)) yn))
+   )) 
+                 
+(defun printindent (i)
+    (cond ( ( eql i 0) nil)
+          (T  (princ "   ") (printindent (- i 1)))
+        )
+)
+(DEFUN printTree(ROOT)
+             (pTreeYN 0 root nil)
+)   
+(defun triage()
+    (terpri)
+    (setf YN (getp (cddr (getp root question-ht)) symptom-ht))
+
+     (cond ((not(null (getp root diag-ht))) (princ (getp root diag-ht)))
+         ((null yn)
+              (printTr (list "ID: " root (getp root question-ht) "N"))
+               (setf root (Cadr (getp root question-ht))) (triage))
+          ( T 
+           (printTR (list "ID: " root (getp root question-ht) "Y"))
+           (setf root (Car (getp root question-ht))) (triage))
+      )
+
+)
+
+
+

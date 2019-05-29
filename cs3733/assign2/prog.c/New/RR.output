@@ -1,0 +1,12 @@
+Student Name: Julius Jenkins
+Input File Name: input.txt
+CPU Scheduling Alg : RR
+
+Process 4 is completed at 16 ms
+Process 1 is completed at 17 ms
+Process 3 is completed at 21 ms
+Process 2 is completed at 22 ms
+
+Average Waiting time = 13.50 ms
+Average Turnaround time = 37.75 ms
+Throughput = 0.18 jobs per ms

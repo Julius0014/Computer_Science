@@ -1,0 +1,10 @@
+NUKE BOOK book.dat
+OPEN BOOK book.data
+CREATE BOOK book.dat 19
+DUMP BOOK book.dat
+CREATE BOOK book.dat 17
+OPEN BOOK book.dat
+INSERT BOOK JOYPGM001,The Joys of Programming,TECH,PGMING,100
+DUMP BOOK book.dat
+INSERT BOOK JOYPGM001,The Joys of Programming,TECH,PGMING,100
+

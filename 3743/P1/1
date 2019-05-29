@@ -1,0 +1,12 @@
+* CS3743 p1Input.txt
+* Nuke the Hash file if it exists
+NUKE BOOK book.dat
+* Opening of a non-existent file should cause an error
+OPEN BOOK book.data
+* Create the hash file
+CREATE BOOK book.dat 19
+DUMP BOOK book.dat
+* Open it
+OPEN BOOK book.dat
+INSERT BOOK JOYPGM001,The Joys of Programming,TECH,PGMING,100
+DUMP BOOK book.dat

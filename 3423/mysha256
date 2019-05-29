@@ -1,0 +1,15 @@
+#!/usr/bin/perl -w
+if(@ARGV == 2){
+    $FileOut = pop @ARGV;
+    open (STDOUT, '>>',$FileOut);
+}
+@lines = <>;
+foreach $dir(@lines){
+    chop $dir;
+    @sFiles = `find $dir -type f` or die print "Failed";
+    foreach $file(@sFiles){
+        chop $file;
+        @String = split(/ /,`sha256sum $file`);
+        print STDOUT "$file\t$String[0]\n";
+    }
+}

@@ -1,0 +1,5 @@
+ubh226 Julius Jenkins
+Compile : gcc -g -o wordcountfreg wordcountfreg.c
+My program is working prefectly.The program use a word header for the linklist.
+Each Word is add to the list
+

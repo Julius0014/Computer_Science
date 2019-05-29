@@ -1,0 +1,51 @@
+ >> NUKE BOOK book.dat
+ >> OPEN BOOK book.data
+    **** ERROR: File does not exist or has invalid format: 'book.data'
+ >> CREATE BOOK book.dat 19
+    Record size is 84
+ >> DUMP BOOK book.dat
+    Primary=19, HighOverflow=19, RecSize=84
+ >> CREATE BOOK book.dat 17
+    Record size is 84
+    **** ERROR: file already exists
+ >> OPEN BOOK book.dat
+ >> INSERT BOOK JOYPGM001,The Joys of Programming,TECH,PGMING,100
+    Hash RBN is 8
+ >> DUMP BOOK book.dat
+    Primary=19, HighOverflow=19, RecSize=84
+     8 Next=0
+        JOYPGM001 TECH        PGMING       100 The Joys of Programming
+ >> INSERT BOOK PYTHON001,Learn Python Without Getting Bit,S PRESS,PGMING,200
+    Hash RBN is 1
+ >> DUMP BOOK book.dat
+    Primary=19, HighOverflow=19, RecSize=84
+     1 Next=0
+        PYTHON001 S PRESS     PGMING       200 Learn Python Without Getting Bit
+     8 Next=0
+        JOYPGM001 TECH        PGMING       100 The Joys of Programming
+ >> INSERT BOOK SQLDBB001,Making Your DB Queries SQueeL,XYZ,DB,300
+    Hash RBN is 16
+ >> INSERT BOOK TECHDR001,My Technical Dream Job,TECH,PGMING,400
+    Hash RBN is 18
+ >> DUMP BOOK book.dat
+    Primary=19, HighOverflow=19, RecSize=84
+     1 Next=0
+        PYTHON001 S PRESS     PGMING       200 Learn Python Without Getting Bit
+     8 Next=0
+        JOYPGM001 TECH        PGMING       100 The Joys of Programming
+    16 Next=0
+        SQLDBB001 XYZ         DB           300 Making Your DB Queries SQueeL
+    18 Next=0
+        TECHDR001 TECH        PGMING       400 My Technical Dream Job
+ >> READ BOOK TECHDR001
+    .. Next=0
+        TECHDR001 TECH        PGMING       400 My Technical Dream Job
+ >> READ BOOK JAVADD001
+    **** ERROR: record not found
+ >> INSERT BOOK TECHDR001,My Technical Dream Job Again,TECH,PGMING,444
+    Hash RBN is 18
+    **** ERROR: record already exists
+ >> READ BOOK TECHDR001
+    .. Next=0
+        TECHDR001 TECH        PGMING       444 My Technical Dream Job Again
+

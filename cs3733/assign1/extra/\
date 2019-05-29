@@ -1,0 +1,11 @@
+struct word {
+    char *value;
+    int count;
+    struct word *pnext;
+};
+struct word *newWord(char *word);
+void printlist(struct word *list){
+    printf("d");
+}
+struct word *update(char word[],struct word *wordList);
+int match(char *word,struct word *wordList);
